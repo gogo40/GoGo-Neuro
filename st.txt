@@ -1,0 +1,14 @@
+y(k) = y^2(k-1)+ 2*y(k-1)+y(k-2)+variavel aleatoria
+
+
+
+
+
+y = y^2 + 2y + y + a
+y^2+2y+a = 0
+
+y = (-2(+/-)sqrt(4-4a))
+
+4-4a > 0
+
+a < 1

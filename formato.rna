@@ -1,0 +1,39 @@
+___________________________________________
+___________________________________________
+TIA 01 - Trabalho de IA 01
+
+Formato do banco de treinamento/validação e teste
+
+Equipe [gogo40]:
+1.) Péricles Lopes Machado
+2.) João Augusto Palmitesta Neto
+3.) Paulo Ribeiro de Almeida Neto
+
+___________________________________________
+___________________________________________
+
+1.) Formato do arquivo
+
+numero_camadas numero_entradas numero_saidas numero_neuronios taxa_aprendizado
+
+Nas numero_neuronios seguintes:
+id_neuronio id_funcao_ativacao camada_que_neuronio_pertence bias constante_p_da_funcao_de_ativacao
+
+Enquanto for diferente 0 0 0:
+u v w (u--->v, u se conecta com v com peso sinaptico w)
+
+
+2.) Lista de ids das função de ativação
+
+0 -> função atan(x,p)=atan(p*x)
+1 -> função linear(x,p)=p*x
+2 -> função simoide(x,p)=1/(1+exp(-p*x)) 
+3 -> função tanh(x,p)=tanh(x*p)
+
+3.) Observações
+1 -> O endereco 0 é reservado para o bias
+2 -> Os enderecos nNeu+1 até nNeu+nIn são reservados para as entradas
+
+4.) Exemplos
+
+Vide arquivo ./xor/xor.rna
