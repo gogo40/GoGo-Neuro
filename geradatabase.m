@@ -41,7 +41,7 @@ for i=18:m
 	
 	x(i) = x(i-1) + (a * x(i-s) / (1 + x(i-s) ^ c)) - b * x(i-1) + 0.1 * N;
 	
-	if (mod(i,300) == 0)
+	if (mod(i,1) == 0)
 		printf("x(%d) = %e\n", i, x(i));
 		fprintf(fr,"%d %e\n", i, x(i));
 		y(k) = x(i);

@@ -35,6 +35,8 @@ int main(int argc, char** argv)
 	FILE* f=fopen(argv[1],"r");
 	FILE* fsol=fopen("sol.dat","w+");
 	FILE* fout=fopen("out.dat","w+");
+	FILE* fapp=fopen("log.v.dat","a+");
+	
 	if(!f){
 		fprintf(stderr,"Falha ao abrir arquivo %s!!!\n",argv[1]);
 		return 3;
@@ -42,26 +44,35 @@ int main(int argc, char** argv)
 	
 	fscanf(f,"%d",&N);
 	double err_acc = 0;
+	double err_acc_2 = 0;
 
 	for(int i=0;i<N;i++){
 		for(int k=0;k<in.size();k++) fscanf(f,"%lf",&in[k]);
 		r.g(in);
 		for(int m=0;m<r.cam[r.NC-1].size();m++){ 
-			double x; 
-			printf("%.9lf",r.G[r.cam[r.NC-1][m]]); 
+			double x, e; 
+			//printf("%.9lf",r.G[r.cam[r.NC-1][m]]); 
 			fscanf(f,"%lf",&x);
-			printf("(%.9lf) ",x);
+			//printf("(%.9lf) ",x);
 			fprintf(fsol,"%d %e\n", i, x);
 			fprintf(fout,"%d %e\n", i, r.G[r.cam[r.NC-1][m]]);
+			
 			err_acc += fabs(x-r.G[r.cam[r.NC-1][m]])/
 			((fabs(x)+1)*r.cam[r.NC-1].size());
+			
+			e = x-r.G[r.cam[r.NC-1][m]];
+			err_acc_2 += e*e;
 		}
-		printf("\n");
+		//printf("\n");
 	}
 	printf("err = %lf\n", 100 * err_acc/N);
+	printf("err_acc_2 = %lf\n", err_acc_2*0.5);
+	fprintf(fapp,"%e\n", err_acc_2*0.5);
+	
 	fclose(fsol);
 	fclose(fout);
 	fclose(f);
+	fclose(fapp);
 	
 	return 0;
 }
