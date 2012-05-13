@@ -134,11 +134,11 @@ void RNA::treina(const char* fn, const char* fout, bool isBatch, bool isNature)
 				}
 			}
 
-			e0=e0/(2*N);
+			e0=e0/(2);
 
 			for(int i=1;i<W.size();i++)
 				for(int j=1;j<W[i].size();j++){
-					dW[i][j]=TA*rand(-1,1);
+					dW[i][j]=TA*rand(-10,10);
 					W[i][j]+=dW[i][j];
 				}
 
@@ -155,7 +155,7 @@ void RNA::treina(const char* fn, const char* fout, bool isBatch, bool isNature)
 				}
 			}
 
-			e1=e1/(2*N);
+			e1=e1/(2);
 			if(e1>e0){
 				for(int i=1;i<W.size();i++)
 					for(int j=1;j<W[i].size();j++){
