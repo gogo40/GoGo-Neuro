@@ -86,9 +86,9 @@ void RNA::treina(const char* fn, const char* fout, bool isBatch, bool isNature)
 			wt[i].resize(W[i].size());
 		}
 
-		for(int i=0;i<W.size();i++)
-			for(int j=0;j<W[i].size();j++)
-				W[i][j] += rand(-1, 1);
+		//for(int i=0;i<W.size();i++)
+			//for(int j=0;j<W[i].size();j++)
+				//W[i][j] += rand(-1, 1);
 	} else {
 		wt1.resize(W.size());
 		wt.resize(W.size());
@@ -138,7 +138,7 @@ void RNA::treina(const char* fn, const char* fout, bool isBatch, bool isNature)
 
 			for(int i=1;i<W.size();i++)
 				for(int j=1;j<W[i].size();j++){
-					dW[i][j]=TA*rand(-0.1,0.1);
+					dW[i][j]=TA*rand(-1,1);
 					W[i][j]+=dW[i][j];
 				}
 
