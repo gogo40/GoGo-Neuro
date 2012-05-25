@@ -5,7 +5,7 @@ using namespace std;
 
 int main()
 {
-    int N_IN = 20, N = 2000;
+    int N_IN = 4, N;
     scanf("%d", &N);
     int M = N / (1 + N_IN);
     vector<double> x(N);
