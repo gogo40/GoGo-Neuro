@@ -4,7 +4,11 @@
 #include <map>
 #include <vector>
 #include <cmath>
+#include <cstring>
 #include "utils.h"
+
+
+#include "utils.cpp"
 
 using namespace std;
 using namespace GOGONEURO;
@@ -67,29 +71,114 @@ int main(int argc, char** argv) {
 
 	fclose(fin);
 
-	matrixD W(n_neu, n_out), b(n_neu, n_out), g(n_neu, n_neu);
+	if (istrain) N--;
 
-	matrixD X(n_neu, n_in);
+	matrixD W(n_neu, n_out), b(N, n_out), g(N, n_neu), gt(n_neu, N);
+
+	matrixD X(n_neu, n_in), ggt(n_neu,n_neu), ggtinv(n_neu, n_neu), C(n_neu, n_in), bgt(n_neu, n_out);
 
 	if (istrain) {
 		map<int, bool> mark;
 
 		for (int i = 0; i < n_neu; ++i) {
-			int q = rand() % N;
+			int q = rand() % (N-1);
 
-			while (mark[q]) q = rand() % N;
+			//while (mark[q]) q = (q+1)% (N-1);
+			q = i;
 
 			mark[q] = true;
 
 			for (int k = 0; k < n_in; ++k) X[i][k] = input[q][k];
-			for (int k = 0; k < n_out; ++k) b[i][k] = output[q][k];
 		}
 
-		for (int i = 0; i < n_neu; ++i)
+		for (int i = 0; i < N; ++i) {
 			for (int j = 0; j < n_neu; ++j) {
-				g[i][j] = exp(-beta * dist(X[i], X[j]));
+				g[i][j] = exp(-beta * dist(input[i], X[j]));
 			}
+			for (int k = 0; k < n_out; ++k) b[i][k] = output[i][k];
+		}
+
+
+		gt = trans(g);
+		ggt = gt * g;
+		bgt = gt * b;
+
+
+		bool st;
+		ggtinv = inv(ggt, st);
+
+		if (!st) cerr << "Falha na inversa!!!" << endl;
+
+		W = ggtinv * bgt;
+
+		FILE* fout = fopen(output_name, "w+");
+
+		fprintf(fout, "%d %d %e\n", W.size(), W[0].size(), beta);
+
+		for (int i = 0; i < W.size(); ++i) {
+			for (int j = 0; j < W[i].size(); ++j) {
+				fprintf(fout, "%e ", W[i][j]);
+			}
+			fprintf(fout, "\n");
+		}
+		for (int i = 0; i < n_neu; ++i) {
+			for (int j = 0; j < n_in; ++j)
+				fprintf(fout, "%e ", X[i][j]);
+			fprintf(fout,"\n");
+		}
+
+		fclose(fout);
+
 	} else {
+		FILE* frna = fopen(output_name, "r");
+
+		fscanf(frna, "%d%d%lf", &n_neu, &n_out, &beta);
+		for (int i = 0; i < n_neu; ++i) {
+			for (int j = 0; j < n_out; ++j) {
+				fscanf(frna, "%lf", &W[i][j]);
+				printf("%e ", W[i][j]);
+			}
+			printf("\n");
+		}
+
+		printf("\n");
+		for (int i = 0; i < n_neu; ++i) {
+			for (int j = 0; j < n_in; ++j){
+				fscanf(frna, "%lf", &C[i][j]);
+				printf("%e ", C[i][j]);
+			}
+			printf("\n");
+		}
+		fclose(frna);
+
+		char buffer[100];
+
+
+		for (int i = 0; i < n_out; ++i) {
+			sprintf(buffer, "f_%d.rna.out", i);
+			FILE* f = fopen(buffer, "w+");
+
+			sprintf(buffer, "f_%d.rna.sol", i);
+			FILE* fs = fopen(buffer, "w+");
+
+			double err = 0;
+
+			for (int k = 0; k < N; ++k) {
+				double out = 0;
+				for (int j = 0; j < n_neu; ++j) {
+					out += W[j][i] * exp (-beta * dist(input[k],C[j]));
+				}
+				fprintf(f, "%e\n", out);
+				fprintf(fs,"%e\n", output[k][i]);
+				err += fabs(out - output[k][i]);
+			}
+
+			fprintf(stderr, "%e\n", err);
+
+			fclose(f);
+			fclose(fs);
+		}
+
 	}
 
 	return 0;
