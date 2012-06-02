@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
 			int q = rand() % (N-1);
 
 			//while (mark[q]) q = (q+1)% (N-1);
-			q = i;
+			//q = i;
 
 			mark[q] = true;
 
@@ -170,10 +170,10 @@ int main(int argc, char** argv) {
 				}
 				fprintf(f, "%e\n", out);
 				fprintf(fs,"%e\n", output[k][i]);
-				err += fabs(out - output[k][i]);
+				err += fabs(out - output[k][i]) * fabs(out - output[k][i]);
 			}
 
-			fprintf(stderr, "%e\n", err);
+			fprintf(stderr, "%e\n", 0.5 * err);
 
 			fclose(f);
 			fclose(fs);
