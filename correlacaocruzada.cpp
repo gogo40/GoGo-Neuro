@@ -26,8 +26,8 @@ int main()
 	
 	for (int s = 0; s <= smax; ++s) {
 		fs->at(s) = 0;
-		for (int k = s; k < N; ++k) {
-			fs->at(s) = f->at(k) * f->at(k - s);
+		for (int k = 0; k < N - s; ++k) {
+			fs->at(s) = f->at(k) * f->at(k + s);
 		}
 	}
 	
