@@ -136,18 +136,13 @@ int main(int argc, char** argv) {
 		for (int i = 0; i < n_neu; ++i) {
 			for (int j = 0; j < n_out; ++j) {
 				fscanf(frna, "%lf", &W[i][j]);
-				printf("%e ", W[i][j]);
 			}
-			printf("\n");
 		}
 
-		printf("\n");
 		for (int i = 0; i < n_neu; ++i) {
 			for (int j = 0; j < n_in; ++j){
 				fscanf(frna, "%lf", &C[i][j]);
-				printf("%e ", C[i][j]);
 			}
-			printf("\n");
 		}
 		fclose(frna);
 
@@ -173,7 +168,7 @@ int main(int argc, char** argv) {
 				err += fabs(out - output[k][i]) * fabs(out - output[k][i]);
 			}
 
-			fprintf(stderr, "%e\n", 0.5 * err);
+			printf("err = %e\n", 0.5 * err);
 
 			fclose(f);
 			fclose(fs);
