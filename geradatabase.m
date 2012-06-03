@@ -62,10 +62,17 @@ for i=1:4
 	fprintf(ftr1f(i), "%d\n", mtr-2);
 end
 
-for i=30:m
+lim1 = 1;
+lim2 = s;
+
+lim1 = 1;
+lim2 = 18;
+
+for i=19:m
 	N = V * randn; % ruido gaussiano
 	
 	x(i) = x(i-1) + (a * x(i-s) / (1 + x(i-s) ^ c)) - b * x(i-1) + 0.1 * N;
+	%x(i) = sin(2 * pi * i / 10);
 	
 	if (mod(i,1) == 0)
 		printf("x(%d) = %e\n", i, x(i));
@@ -74,8 +81,8 @@ for i=30:m
 		k++;
 	end
 	
-	dant(1) = x(i - 1) - ant(1);
-	dant(2) = x(i - s) - ant(2);
+	dant(1) = x(i - lim1) - ant(1);
+	dant(2) = x(i - lim2) - ant(2);
 	dant(3) = x(i) - ant(3);
 	
 	for k=1:4
@@ -90,12 +97,12 @@ for i=30:m
 	
 	if (i <= mtr)
 		if (dist > Tc)
-			fprintf(ftrf, "%e %e %e\n", x(i-1), x(i-s), x(i));
+			fprintf(ftrf, "%e %e %e\n", x(i-lim1), x(i-lim2), x(i));
 			
 			Ntrf += 1.0;
 			
-			ant(1) = x(i - 1);
-			ant(2) = x(i - s);
+			ant(1) = x(i - lim1);
+			ant(2) = x(i - lim2);
 			ant(3) = x(i);
 			
 		end
@@ -126,15 +133,15 @@ for i=30:m
 			
 		end
 		
-		fprintf(ftr, "%e %e %e\n", x(i-1), x(i-s), x(i));
+		fprintf(ftr, "%e %e %e\n", x(i-lim1), x(i-lim2), x(i));
 		Ntr += 1.0;
 	elseif (i <= mv)
-		fprintf(fv, "%e %e %e\n", x(i-1), x(i-s), x(i));
+		fprintf(fv, "%e %e %e\n", x(i-lim1), x(i-lim2), x(i));
 	elseif (i <= mt)
-		fprintf(ft, "%e %e %e\n", x(i-1), x(i-s), x(i));
+		fprintf(ft, "%e %e %e\n", x(i-lim1), x(i-lim2), x(i));
 	end
 	
-	fprintf(f, "%e %e %e\n", x(i-1), x(i-s), x(i));
+	fprintf(f, "%e %e %e\n", x(i-lim1), x(i-lim2), x(i));
 end
 
 
