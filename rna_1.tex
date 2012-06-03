@@ -58,8 +58,7 @@ x_k = x_{k-1} + \fra{a x_{k-s} } { 1 + x_{i-s} ^ c} - b x_{k-1} + 0.1 N ,
 \end{equation}
 onde $N$ é uma variável aleatória
 de distribuição normal com $\mu = 0$ e $\sigma^2 = 1$, $a = 0.2$,
-$b = 0.1$, $c = 10$ e $s = 17$. Além disso, é realizado um estudo, utilizando
-a função de auto-correlação do sinal $x_k$,
+$b = 0.1$, $c = 10$ e $s = 17$. Além disso, é realizado um estudo
 para se tentar obter a melhor escolha
 de parâmetros anteriores da série para minimizar o erro quadrático associado a rede.
 
@@ -67,8 +66,8 @@ de parâmetros anteriores da série para minimizar o erro quadrático associado 
 
 \section{As rede neurais}
 
-A rede neural possuiam 7 neurônios, cujos centros associados eram escolhidos de forma aleatória
-dentro da base de dados filtrada contendo em torno de 3 mil amostras da série $x_k$. A distância $D$,
+As redes neurais possuem 7 neurônios, cujos centros associados foram escolhidos de forma aleatória
+dentro da base de dados filtrada contendo 3 mil amostras da série $x_k$. A distância $D$,
 utilizada para avaliar a distância entre uma entrada e o centro associado ao neurônio, foi a euclidiana.
 A função de ativação utilizada foi $u_i(\vec{x}) =  e^{-\beta  D(\vec{x} - \vec{c_i})}$, onde $c_i$ é
 o centro associado ao neurônio $i$ e o parâmetro livre $\beta$, nos testes realizados, foi $0,1$.
@@ -81,54 +80,147 @@ Foram definidos cinco tipos de entradas para a rede:
 \item $I_2 = \{x(k-1), x(k-2)\}$
 \item $I_3 = \{x(k-1), ... , x(k-3)\}$
 \item $I_4 = \{x(k-1), ... , x(k-4)\}$
-\item $I_5 = \{x(k-a), ... , x(k-b)\}$
+\item $I_5 = \{x(k-a), x(k-b)\}$
 \end{itemize}
 
-No caso do $I_5$, tenta-se definir a melhor escolha de $a$ e $b$ que minimiza o erro quadrático.
-A função de auto-correlação é utilizada na tentativa de se determinar a melhor escolha para $a$ e
-$b$. 
+No caso do $I_5$, tenta-se definir uma escolha de $a$ e $b$ que minimiza o erro quadrático.
 
 Para cada tipo de entrada foi gerado um banco de dados de treino e teste utilizando-se o mesmo algoritmo
-de filtragem apresentado nos trabalhos 7 e 8.
+de filtragem apresentado nos trabalhos 7 e 8. O tipo de entrada, a partir de agora identificará a rede
+neural associada.
 
-\section{O treinamento}
+\section{O treinamento \label{treina}}
 
-Como no trabalho 8, o método de mínimos quadrados foi utilizado para o ajuste dos pesos de cada rede.
+Como no trabalho 8, o método de mínimos quadrados foi utilizado para o ajuste dos pesos de cada rede,
+usando o mesmo {\it database} mas variando a configuração da entrada conforme foi descrito na seção anterior.
+
+No caso da rede de tipo $I_5$, foi adotada a seguinte heurística:
+
+\begin{itemize}
+\item São geradas $NR$ séries $(x_i)_k$, com $i = 1, 2, ... ,M$ e $k = 1, 2, ... , NR$,
+como definida na Eq. (\ref{eq.1}).
+\item Para cada sequência $(x_i)_k$, define-se uma variável 
+$dP_k = \fra{1}{N_{picos}}\su{n=2}{N_{picos}}|p_n - p_{n-1}|$, onde $p_n$ é
+a posição do n-ésimo pico da série $(x_i)_k$.
+\item Calcula-se o valor de $P = \fra{1}{NR} \su{n = 1} {NR}dP_n$.
+\end{itemize}
+
+A variável aleatória $dP_k$ é uma estimativa para o período da série $(x_i)_k$ que utiliza a distância 
+entre picos da série para se obter o valor do período. A posição de um pico na série $(x_i)_k$ é um
+valor $p$ tal que $(x_p)_k > (x_{p-1})_k$ e $(x_p)_k > (x_{p+1})_k$.
+
+Neste trabalho foram geradas $NR = 5000$ séries com $M = 5000$ elementos cada uma. A distribuição de
+$dP_k$ pode ser observada na Fig. \ref{fig.picos}.
+
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.5]{./t9/picos.png}
+     \caption{Distribuição de $dP$ em 5000 séries.}
+     \label{fig.picos}
+\end{figure}
+
+A média da váriavel $dP$ nas 5000 séries geradas foi de $17,8154$, a variância foi de $0,5028$ e
+o desvio padrão foi de $0,709$. Isso indica que o período de uma série $(x_i)_k$ tem grande probabilidade
+de está contido no intervalo $[17, 18]$. Por isso, neste trabalho foram testados duas configurações de $I_5$,
+uma com $a=1$ e $b=17$ e outra com $a=1$ e $b=18$.
+
 
 \section{Resultados}
 
-Utilizando a rede RBF foi possível reduzir o erro quadrático 
-no teste para $0,099612$, um resultado próximo ao 
-obtido com o {\it backpropagation} no trabalho anterior (0,098). Mas, para se 
-obter esse erro, o tempo de treinamento
-foi bem reduzido, já que o {\it mínimos quadrados} não sofre com problemas de mínimos locais que afetam
-significativamente o método {\it backpropagation}.
+Foi utilizado o mesmo algoritmo de treinamento do trabalho 8, o mínimos quadrados, para ajustar
+os pesos de cada tipo de rede. A seguir, temos o erro obtido para cada configuração:
 
-Este experimento ilustra uma característica importante da técnica de redes neurais com funções de base radial,
-o ajuste dos pesos é bem mais simples e é possível obter resultados muito bons em um tempo de treinamento 
-reduzido.
-No caso, o treinamento se resume na filtragem da {\it database} e no cáculo da {\it pseudo-inversa} da matriz $w$.
+\begin{table}[htb]
+\caption{Erro quadrático para cada tipo de rede treinada para o mesmo conjunto de teste
+do trabalho 7 e 8.}
+\label{table.I}
+\centering
+\small
 
-A figura \ref{erro.1} ilustra os bons resultados obtidos.
+\begin{tabular}{c|c}
+
+\hline
+Tipo de rede & Erro quadrático\\
+\hline
+$I_1$ & $1.545211$\\
+$I_2$ & $0.3560334$\\
+$I_3$ & $0.2470221$\\
+$I_4$ & $0.5016882$\\
+$I_5$ com $a=1$ e $b=18$ & $0.2042160$\\
+$I_5$ com $a=1$ e $b=17$ & $0.099801$ \\
+\hline
+
+\end{tabular}
+
+\end{table}
+
+Os testes foram realizados usando uma série diferente da usada no treinamento.
+
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.5]{./t9/f1t.png}
+     \caption{Saída gerada pela rede neural $I_1$ para o conjunto de teste do trabalho 7 e 8.}
+     \label{fig.teste.1}
+\end{figure}
+
+
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.5]{./t9/f2t.png}
+     \caption{Saída gerada pela rede neural $I_2$ para o conjunto de teste do trabalho 7 e 8.}
+     \label{fig.teste.2}
+\end{figure}
+
+
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.5]{./t9/f3t.png}
+     \caption{Saída gerada pela rede neural $I_3$ para o conjunto de teste do trabalho 7 e 8.}
+     \label{fig.teste.3}
+\end{figure}
+
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.5]{./t9/f4t.png}
+     \caption{Saída gerada pela rede neural $I_4$ para o conjunto de teste do trabalho 7 e 8.}
+     \label{fig.teste.4}
+\end{figure}
+
+
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.5]{./t9/f5t.png}
+     \caption{Saída gerada pela rede neural $I_5$ com $a=1$ e $b=18$ para o conjunto de teste do trabalho 7 e 8.}
+     \label{fig.teste.5}
+\end{figure}
 
 \begin{figure}[!htb]
      \centering
      \includegraphics[scale=0.5]{./t8/saidaRBFt.png}
-     \caption{Comparação da saída obtida pela rede RBF com a saída esperada.}
-     \label{erro.1}
+     \caption{Saída gerada pela rede neural $I_5$ com $a=1$ e $b=17$ para o conjunto de teste do trabalho 7 e 8.}
+     \label{fig.teste.6}
 \end{figure}
 
+As Fig. \ref{fig.teste.1} a \ref{fig.teste.6} mostram as aproximações geradas pelas redes neurais deste trabalho.
 
 \section{Conclusão}
-Neste trabalho, uma rede neural utilizando funções de base radial é utilizada para simular a mesma série temporal
-do trabalho 7. Com um tempo de processamento bem menor e utilizando a mesma {\it database} e a mesma quantidade 
-de neurônios foi possível ajustar os pesos da rede para se obter um erro similar ao obtido no trabalho anterior.
-As principais dificuldades na utilização dessa técnica são a escolha de um valor apropriado para o parâmetro livre
-{\it beta} e a determinação dos centros associados a cada neurônio da rede.
+Conforme pode-se observar na Tabela \ref{table.I}, as redes neurais que utilizam a $17^a$ ou a
+$18^a$ amostra anterior foram
+as que obtiveram o menor erro quadrático. Isso mostra que a heurística apresentada na seção  \ref{treina}
+nos fornece uma boa estimativa para o período de uma série temporal e a utilização de um atraso igual
+a esse período permite obtermos uma rede neural com baixo erro quadrático.
 
-Além disso, mostrou-se como técnicas de treinamento sem a utilização do gradiente do erro podem ser utilizadas
-para um ajuste rápido dos pesos de uma rede neural. Embora, a técnica requeira mais espaço de memória, isso é
-facilmente compensado pelo fato do tempo de ajuste dos pesos ser bastante reduzido.
+Além disso, a utilização da rede RBF permitiu reduzir significativamente o tempo de treinamento. Basicamente,
+utilizando-se esse tipo de rede as principais tarefas se concentram no pré-processamento da base de dados e
+na definição da entrada mais apropriada. Neste trabalho, não houve grandes problemas para se determinar
+os centros associados a cada neurônio, mas sabe-se que esse pode ser um problema em situações mais gerais.
+A heurística mostrada no trabalho 7 do autor permitu uma bom método para se definir os centros dos neurônios.
 
 \end{document}
 

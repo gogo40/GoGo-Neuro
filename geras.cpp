@@ -14,7 +14,7 @@ double random(double a, double b) {
 int main()
 {
 	srand(time(NULL));
-	int N = 3000;
+	int N = 5000;
 	vector<double> x(N,0);
 	int s = 17;
 	double c = 10;
@@ -23,7 +23,7 @@ int main()
 	
 	printf ("%d\n", N-30-1);
 	
-	for (int i = 30; i < 3000; ++i) {
+	for (int i = 30; i < N; ++i) {
 		x[i] = x[i-1] + (a * x[i-s] / (1 + pow(x[i-s],c))) - b * x[i-1] + 0.1 * random(-0.1, 0.1);
 		printf("%e\n", x[i]);
 	}
