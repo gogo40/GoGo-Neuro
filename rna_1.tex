@@ -1,0 +1,172 @@
+\documentclass[10pt,journal,letterpaper,compsoc]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\usepackage{multirow}
+
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage[utf8]{inputenc}
+
+\makeatletter
+%%\usepackage{babel}
+\usepackage[brazilian]{babel}
+\makeatother
+
+
+\newcommand{\inte}[4]{
+	\displaystyle \int_{#1}^{#2} #3 d#4
+}
+
+\newcommand{\fra}[2]{
+	\displaystyle \frac{{#1}}{{#2}} 
+}
+\newcommand{\frap}[2]{
+	\left( \displaystyle \frac{#1}{#2} \right)
+}
+
+\newcommand{\su}[2]{
+	\displaystyle \sum_{#1}^{#2}
+}
+
+\newcommand{\df}[2]{
+	\fra{d \left[ #1 \right]}{d#2}
+}
+
+\newcommand{\dfa}[2]{
+	\fra{d #1 }{d#2}
+}
+
+\newcommand{\dpa}[2]{
+	\fra{\partial #1 }{\partial #2}
+}
+
+\title{$8^o$ Trabalho de Redes Neurais}
+\author{Péricles Lopes Machado}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+Neste trabalho, uma rede neural RBF é treinada para simular a equação de recorrência:
+\begin{equation}
+x_k = x_{k-1} + \fra{a x_{k-s} } { 1 + x_{i-s} ^ c} - b x_{k-1} + 0.1 N ,
+\label{eq.1}
+\end{equation}
+onde $N$ é uma variável aleatória
+de distribuição normal com $\mu = 0$ e $\sigma^2 = 1$, $a = 0.2$,
+$b = 0.1$, $c = 10$ e $s = 17$.
+
+Os resultados são comparados com os obtidos no trabalho 7.
+
+\end{abstract}
+
+\section{A rede neural}
+
+A rede neural possuia 7 neurônios, cujos centros associados eram escolhidos de forma aleatória
+dentro da base de dados filtrada contendo em torno de 3 mil amostras da série $x_k$. A distância $D$,
+utilizada para avaliar a distância entre uma entrada e o centro associado ao neurônio, foi a euclidiana.
+A função de ativação utilizada foi $u_i(\vec{x}) =  e^{-\beta  D(\vec{x} - \vec{c_i})}$, onde $c_i$ é
+o centro associado ao neurônio $i$ e o parâmetro livre $\beta$, nos testes realizados, foi $0,1$.
+
+\section{A geração dos conjuntos de treinamento, validação e teste \label{secao.gera.db}}
+
+Inicialmente, foram gerados $M=10000$ amostra do sinal (\ref{eq.1}), no formato
+$v_i = (x_{i-1},x_{i-s},x_{i})$, 
+com $i = s+1, ..., M$, onde $x_{n} = 0$, para $n = 1, 2, ..., s$.
+O conjunto de amostras $S$ gerado foi divido em três partes $U_0, V, T$, onde $U_0$ contém
+$70\%$ do conjunto $S$ e é filtrado para se gerar
+o conjunto de treinamento, $V$ é o conjunto de validação e contém $20 \%$ do conjunto $S$ e $T$
+é o conjunto de teste e contém $10 \%$ de $S$. A partição do conjunto $S$ em
+$U_0$, $V$ e $T$
+foi realizada de forma aleatória.
+
+Para tornar mais eficiente o treinamento, foi realizada uma filtragem pra eliminar dados de entrada com
+grande semelhança. A medida de semelhança entre duas amostras de entrada, 
+$\vec{v}_i = (x_{i-1}, x_{i-s}, x_{i})$ e 
+$\vec{v}_k = (x_{k-1}, x_{k-s}, x_{k})$, foi a função dada na equação(\ref{eq.2}).
+
+\begin{equation} 
+D(\vec{v}_i,\vec{v}_k) = \sqrt{  <\vec{d_{i,k}}, \vec{d_{i,k}}>},
+\label{eq.2}
+\end{equation}
+onde $\vec{d_{i,k}} = \vec{v}_i - \vec{v}_k$.
+
+O algoritmo de filtragem é o apresentado a seguir:
+
+\begin{itemize}
+\item $\vec{x}_{ant} = (0, 0, 0)$.
+\item Define-se uma distância mínima $\epsilon$ que as amostras tem de ter com relação a $x_{ant}$
+para entrar no conjunto de treinamento $U$.
+\item Para cada elemento $v_k$ de $U_0$, verifica-se o valor de $D(v_k, x_{ant})$, se este
+valor for maior que $\epsilon$, então $v_k$ entra para o conjunto $U$ e $x_{ant}$ passa ser
+igual a $v_k$.
+\end{itemize}
+
+A utilização desse algoritmo, com um $\epsilon = 0.1$, permitiu reduzir o conjunto de treinamento
+em $61.51 \%$.
+
+\section{O treinamento}
+
+O método de mínimos quadrados foi utilizado para ajustar os pesos das conexões entre a camada intermediária
+e a camada de saída. A equação (\ref{eq.ajuste}) é utilizada para ajustar a matriz de pesos $w$ que possui
+$N_{neuronios} \times N_{saidas}$ valores.
+
+\begin{eqnarray}
+Gw = b, 
+\label{eq.ajuste}
+\end{eqnarray}
+onde $G$ , com $G_{ij} = e^{-\beta D(x_i, c_j)}$ e $N_{amostras} \times N_{neuronios}$ valores, é uma 
+matriz que relaciona cada entrada do banco de dados de treinamento
+com um neurônio $j$,  calculando a influência do neurônio $j$ sobre a entrada $i$. $b$ é uma matriz
+ com $N_{amostras} \times N_{saidas}$ valores contendo as saídas esperadas para cada amostra $x_i$
+ apresentada. Cada amostra $x_i$ contém $M$ dimensões.
+ 
+ Pelo método de mínimos quadradaos o valor de $w$ pode ser calculado utilizando-se a {\it pseudo-inversa}
+de $G$.
+
+\begin{eqnarray}
+G^TGw = G^Tb \\
+w = [G^TG]^{-1}G^Tb
+\end{eqnarray} 
+
+\section{Resultados}
+
+Utilizando a rede RBF foi possível reduzir o erro quadrático 
+no teste para $0,099612$, um resultado próximo ao 
+obtido com o {\it backpropagation} no trabalho anterior (0,098). Mas, para se 
+obter esse erro, o tempo de treinamento
+foi bem reduzido, já que o {\it mínimos quadrados} não sofre com problemas de mínimos locais que afetam
+significativamente o método {\it backpropagation}.
+
+Este experimento ilustra uma característica importante da técnica de redes neurais com funções de base radial,
+o ajuste dos pesos é bem mais simples e é possível obter resultados muito bons em um tempo de treinamento 
+reduzido.
+No caso, o treinamento se resume na filtragem da {\it database} e no cáculo da {\it pseudo-inversa} da matriz $w$.
+
+A figura \ref{erro.1} ilustra os bons resultados obtidos.
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.5]{./t8/saidaRBFt.png}
+     \caption{Comparação da saída obtida pela rede RBF com a saída esperada.}
+     \label{erro.1}
+\end{figure}
+
+
+\section{Conclusão}
+Neste trabalho, uma rede neural utilizando funções de base radial é utilizada para simular a mesma série temporal
+do trabalho 7. Com um tempo de processamento bem menor e utilizando a mesma {\it database} e a mesma quantidade 
+de neurônios foi possível ajustar os pesos da rede para se obter um erro similar ao obtido no trabalho anterior.
+As principais dificuldades na utilização dessa técnica são a escolha de um valor apropriado para o parâmetro livre
+{\it beta} e a determinação dos centros associados a cada neurônio da rede.
+
+Além disso, mostrou-se como técnicas de treinamento sem a utilização do gradiente do erro podem ser utilizadas
+para um ajuste rápido dos pesos de uma rede neural. Embora, a técnica requeira mais espaço de memória, isso é
+facilmente compensado pelo fato do tempo de ajuste dos pesos ser bastante reduzido.
+
+\end{document}
+
