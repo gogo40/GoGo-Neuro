@@ -75,7 +75,7 @@ for i=19:m
 	%x(i) = sin(2 * pi * i / 10);
 	
 	if (mod(i,1) == 0)
-		printf("x(%d) = %e\n", i, x(i));
+		%printf("x(%d) = %e\n", i, x(i));
 		fprintf(fr,"%e\n", x(i));
 		y(k) = x(i);
 		k++;
