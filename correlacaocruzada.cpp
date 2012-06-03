@@ -8,9 +8,9 @@ using namespace std;
 int main()
 {
 	char fname[200];
-	int N, Nt = 1;
+	int N, Nt = 20;
 	
-	int smax = 100;// atraso maximo
+	int smax = 200;// atraso maximo
 	vector<double>* fs = new vector<double>(smax + 1, 0.0);
 		
 	for (int t = 1; t <= Nt; ++t) {
