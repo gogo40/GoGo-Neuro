@@ -34,24 +34,71 @@ int main()
 		printf("%e\n", v[i]);
 	}
 	
-	vector<int> picos;
+	vector<int> picosMax;
+	vector<int> picosMin;
 	for (int i = 0; i < N; ++i) {
 		if (i > 0 and i < N - 1) {
 			if ( (v[i] >= v[i-1]) and (v[i] >= v[i+1])) {
 				//fprintf(stderr, "%d %e\n", i, v[i]);
-				picos.push_back(i);
+				picosMax.push_back(i);
+			}
+			
+			if ((v[i] < v[i-1]) and (v[i] < v[i+1]) ) {
+				picosMin.push_back(i);
 			}
 		}
 	}
 	
-	double acc = 0;
-	for (int i = 1; i < picos.size(); ++i) {
-		acc += picos[i] - picos[i-1];
+	FILE* fmin, *fmax;
+	
+	fmin = fopen("freq_min.dat", "r");
+	fmax = fopen("freq_max.dat", "r");
+	
+	vector<int> freqm(N+1, 0);
+	vector<int> freqM(N+1, 0);
+	
+	if (fmin) {
+		for (int i = 0; i <= N; ++i) {
+			fscanf(fmin, "%d", &freqm[i]);
+		}
+		
+		fclose(fmin);
 	}
 	
-	fprintf(stderr,"%e\n", acc / picos.size());
+	if (fmax) {
+		for (int i = 0; i <= N; ++i) {
+			fscanf(fmax, "%d", &freqM[i]);
+		}
+		
+		fclose(fmax);
+	}
 	
+	double acc = 0;
+	for (int i = 1; i < picosMax.size(); ++i) {
+		acc += picosMax[i] - picosMax[i-1];
+		freqM[picosMax[i] - picosMax[i-1]]++;
+	}
+	
+	fprintf(stderr,"%e\n", acc / picosMax.size());
+	
+	acc = 0;
+	for (int i = 1; i < picosMin.size(); ++i) {
+		acc += picosMin[i] - picosMin[i-1];
+		freqm[picosMin[i] - picosMin[i-1]]++;
+	}
+	
+	fprintf(stderr,"%e\n", acc / picosMin.size());
 
+	fmin = fopen("freq_min.dat", "w+");
+	fmax = fopen("freq_max.dat", "w+");
+	
+	for (int i = 0; i <= N; ++i) {
+		fprintf(fmin, "%d\n", freqm[i]);
+		fprintf(fmax, "%d\n", freqM[i]);
+	}
+	
+	fclose(fmin);
+	fclose(fmax);
 	
 	return 0;
 }

@@ -1,5 +1,6 @@
 #include <ctime>
 #include <cstdlib>
+#include <cstring>
 #include <cmath>
 #include <cstdio>
 #include <vector>
@@ -11,7 +12,7 @@ double random(double a, double b) {
 	return a + r * (b - a);
 }
 
-int main()
+int main(int argc, char** argv)
 {
 	srand(time(NULL));
 	int N = 5000;
@@ -20,7 +21,7 @@ int main()
 	double c = 10;
 	double b = 0.1;
 	double a = 0.2;
-	
+	sscanf(argv[1], "%d", &argv[1]);
 	printf ("%d\n", N-30-1);
 	
 	for (int i = 30; i < N; ++i) {
