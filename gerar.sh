@@ -1,9 +1,13 @@
 g++ -O2 -o geras geras.cpp
 g++ -O2 -o normal normal.cpp
-for (( i = 1 ; i < 1000 ; i++ )) 
+
+rm *.dat
+
+for (( i = 1 ; i < $1 ; i++ )) 
 do
 	echo "Gerando caso " $i "...";
-	./geras 1000 > r.dat
+	./geras $1 > r.dat
 	./normal < r.dat > r.n.dat
 	#mv r.n.dat r.$i.dat
 done;
+

@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	srand(time(NULL));
 	int N = 5000;
 	vector<double> x(N,0);
-	int s = 17;
+	int s = 27;
 	double c = 10;
 	double b = 0.1;
 	double a = 0.2;
@@ -25,7 +25,8 @@ int main(int argc, char** argv)
 	printf ("%d\n", N-30-1);
 	
 	for (int i = 30; i < N; ++i) {
-		x[i] = x[i-1] + (a * x[i-s] / (1 + pow(x[i-s],c))) - b * x[i-1] + 0.1 * random(-0.1, 0.1);
+		//x[i] = x[i-1] + (a * x[i-s] / (1 + pow(x[i-s],c))) - b * x[i-1] + 0.1 * random(0, 0.1);
+		x[i] = sin((M_PI*2*i)/s) + 0.05 * random(-1, 1);
 		printf("%e\n", x[i]);
 	}
 	
