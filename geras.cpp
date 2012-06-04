@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 	for (int i = 0; i < v.size(); ++i) {
 		bool ok = true;
 		for (int j = 0; j < w.size(); ++j)
-			if (dist(v[i], v[j], M) < rm) {
+			if (dist(v[i], v[j], M+1) < rm) {
 				ok = false;
 				break;
 			}

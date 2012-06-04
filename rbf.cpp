@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
 		for (int i = 0; i < n_neu; ++i) {
 			int q = rand() % (N-1);
 
-			//while (mark[q]) q = (q+1)% (N-1);
+			while (mark[q]) q = (q+1)% (N-1);
 			//q = i;
 
 			mark[q] = true;
