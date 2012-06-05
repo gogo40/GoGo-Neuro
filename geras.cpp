@@ -52,8 +52,16 @@ int main(int argc, char** argv)
 	double lmb, L;
 	sscanf(argv[3+M], "%lf", &lmb);
 	
-	for (int i = mp; i < N; ++i) {
+	if(0)for (int i = mp; i < N; ++i) {
 		x[i] = x[i-1] + (a * x[i-s] / (1 + pow(x[i-s],c))) - b * x[i-1] + 0.1 * random(0, 0.1);
+	}
+	else{
+		scanf("%d", &N);
+		for (int i = 0; i < N; ++i) {
+			double va;
+			scanf("%lf", &va);
+			x[i] = va;
+		}
 	}
 	
 	vector<vector<double> > v(N - mp);
@@ -90,7 +98,7 @@ int main(int argc, char** argv)
 	for (int i = 0; i < v.size(); ++i) {
 		bool ok = true;
 		for (int j = 0; j < w.size(); ++j)
-			if (dist(v[i], v[j], M+1) < rm) {
+			if (dist(v[i], v[j], M) < rm) {
 				ok = false;
 				break;
 			}
