@@ -50,6 +50,17 @@ namespace GOGONEURO{
 			for(int i=0;i<n;i++) (*this)[i]=vectorD(m,v); 
 		}
 
+		matrixD& operator=(const matrixD& v) {
+			this->resize(v.size());
+			for (int i = 0; i < v.size(); ++i) {
+				this->at(i).resize(v[i].size());
+				for (int j = 0; j < v[i].size(); ++j) {
+					this->at(i).at(j) = v[i][j];				
+				}			
+			}
+			return *this;		
+		}
+
 	};
 
 	/**

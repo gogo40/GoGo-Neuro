@@ -122,7 +122,7 @@ void GOGONEURO::gauss(int n, matrixD& A, matrixD& X, matrixD& B, bool& st){
 
 		if(cmpD(pv,0.0)==0){
 			st=false;
-			fprintf(stderr,"Matriz inversa nao existe! Saindo...\n");
+			//fprintf(stderr,"Matriz inversa nao existe! Saindo...\n");
 			for(int i=0;i<n;i++)
 				for(int j=0;j<n;j++) X[i][j]=0.1;
 			return;
